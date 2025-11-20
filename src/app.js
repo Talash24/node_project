@@ -1,22 +1,19 @@
 const express = require("express");
 
 const app = express();
+const {adminAuth} = require("./middlewares/auth")
 
-app.get("/user", (req, res) => {
-    res.send({firstName: "ashraful", lastname: "alam"});
+app.use("/admin", adminAuth)
+
+app.get("/admin/getAllData", (req, res) => {
+    
+   res.send("All data send");
 });
 
-app.use("/hello", (req, res) => {
-    res.send("Hello from the server.....");
+app.get("/admin/deleteUser", (req, res) => {
+    res.send("Deleted a user");
 });
 
-app.use("/testing", (req, res) => {
-    res.send("server testing 1,2,3,4....")
-});
-
-app.post("/user", (req, res) => {
-    res.send("data saved successfully to the DB");
-});
-app.listen(3000, () => {
-    console.log("Server is successfully listening on port 3000...");
+app.listen(7777, () => {
+    console.log("Server is successfully listening on port 7777...");
 });
