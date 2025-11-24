@@ -41,12 +41,11 @@ app.post("/login", async (req, res) => {
       throw new Error("Invalid credentials");
     }
     validateLoginData(req);
-    console.log(password);
-    console.log(user.password);
-    const isPasswordValid = await bcrypt.compare(password, user.password);
-    console.log(isPasswordValid);
+   
+    const isPasswordValid = await user.validatePassword(password);
+   
     if (isPasswordValid) {
-      const token = await jwt.sign({ _id: user._id }, "cha_khabo4jkldami");
+      const token = await user.getJWT();
       res.cookie("token", token);
       res.send("Login Successful!!!");
     } else {
@@ -129,6 +128,12 @@ app.patch("/user/:userId", async (req, res) => {
     res.status(400).send("Failed to update the data" + err.message);
   }
 });
+
+app.post("/sendConnectionRequest", userAuth, async (req, res) => {
+    const user = req.user;
+    console.log("Sending a connection request");
+    res.send(user.firstName + " sending connection request ");
+})
 
 connectDB()
   .then(() => {
