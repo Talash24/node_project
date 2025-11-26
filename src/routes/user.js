@@ -27,7 +27,7 @@ router.get("/user/requests", userAuth, async (req, res) => {
     }
 });
 
-router.get("/user/requests/received", userAuth, async (req, res) => {
+router.get("/user/connections", userAuth, async (req, res) => {
     try{
 
         const loggedInUser = req.user;
@@ -36,9 +36,16 @@ router.get("/user/requests/received", userAuth, async (req, res) => {
                 {toUserId: loggedInUser._id, status: "accepted"},
                 {fromUserId: loggedInUser._id, status: "accepted"},
             ],
-        }).populate("fromUserId", USER_SAFE_DATA);
+        }).populate("fromUserId", USER_SAFE_DATA)
+          .populate("toUserId", USER_SAFE_DATA)
 
-        const data = connectionRequests.map((row) => row.fromUserId);
+        const data = connectionRequests.map((row) => {
+            if(row.fromUserId._id.toString() === loggedInUser._id.toString()){
+                return row.toUserId;
+            }else{
+                return row.fromUserId;
+            }
+        });
 
         res.json({
             data: data
